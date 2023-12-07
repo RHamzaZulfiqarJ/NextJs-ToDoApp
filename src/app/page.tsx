@@ -6,31 +6,32 @@ import AddIcon from "@mui/icons-material/Add";
 import Tasks from "@/Components/Tasks";
 import { useState } from "react";
 
+const [task, setTask] = useState<string[]>([]);
+const [data, setData] = useState<string>("");
+const [open, setOpen] = useState<boolean>(false)
+
+const handleChange = (e: any) => {
+  setData(e.target.value);
+};
+
+const handleSubmit = () => {
+  if (data == "") {
+    handleClickOpen();
+  } else {
+    setTask([...task, data].reverse());
+    setData("");
+  }
+};
+
+const handleClickOpen = () => {
+  setOpen(true);
+}
+
+const handleClickClose = () => {
+  setOpen(false);
+}
+
 const page = () => {
-  const [task, setTask] = useState<string[]>([]);
-  const [data, setData] = useState<string>("");
-  const [open, setOpen] = useState<boolean>(false)
-
-  const handleChange = (e: any) => {
-    setData(e.target.value);
-  };
-
-  const handleSubmit = () => {
-    if (data == "") {
-      handleClickOpen();
-    } else {
-      setTask([...task, data].reverse());
-      setData("");
-    }
-  };
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  }
-
-  const handleClickClose = () => {
-    setOpen(false);
-  }
 
   return (
     <>
