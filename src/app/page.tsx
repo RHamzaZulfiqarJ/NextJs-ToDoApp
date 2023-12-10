@@ -1,37 +1,54 @@
 "use client";
 
-import { Input, TextField, Alert, Snackbar } from "@mui/material";
+import { Input, TextField, Alert, Snackbar, IconButton } from "@mui/material";
 import Button from "../Components/BlueButton";
 import AddIcon from "@mui/icons-material/Add";
-import Tasks from "@/Components/Tasks";
+import CloseIcon from '@mui/icons-material/Close';
 import { useState } from "react";
 
-const [task, setTask] = useState<string[]>([]);
-const [data, setData] = useState<string>("");
-const [open, setOpen] = useState<boolean>(false)
-
-const handleChange = (e: any) => {
-  setData(e.target.value);
+type TasksType = {
+  id: string;
+  task: string;
 };
-
-const handleSubmit = () => {
-  if (data == "") {
-    handleClickOpen();
-  } else {
-    setTask([...task, data].reverse());
-    setData("");
-  }
-};
-
-const handleClickOpen = () => {
-  setOpen(true);
-}
-
-const handleClickClose = () => {
-  setOpen(false);
-}
 
 const page = () => {
+  const [task, setTask] = useState<TasksType[]>([]);
+  const [data, setData] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleChange = (e: any) => {
+    setData(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    if (data == "") {
+      handleClickOpen();
+    } else {
+      let newId = Math.random().toString(36);
+      const newTodoItem: TasksType = {
+        id: newId,
+        task: data,
+      };
+
+      setTask([...task, newTodoItem]);
+      setData("");
+    }
+  };
+
+  const deleteTask = (id: string) => {
+    const newTask = task.filter((task) => task.id !== id);
+    setTask(newTask);
+  }
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClickClose = () => {
+    setOpen(false);
+  };
+
+  console.log(task)
 
   return (
     <>
@@ -47,16 +64,33 @@ const page = () => {
               variant="outlined"
               placeholder="Add Your New Todo"
               onChange={handleChange}
+              autoFocus
             />
             <Button onButtonClick={handleSubmit} data={<AddIcon />} />
           </div>
           <div>
-            <Tasks tasks={task} />
+            <div className="flex flex-col gap-4 items-center h-auto">
+              {task.map((task, key) => (
+                <div
+                  key={key}
+                  aria-multiline
+                  className="bg-[#F3F1F4] py-2 w-full px-3 text-black rounded-md overflow-auto flex items-center justify-between">
+                  <div>{task.task}</div>
+                  <div>
+                    <IconButton onClick={() => deleteTask(task.id)}>
+                      <CloseIcon className="text-red-500" />
+                    </IconButton>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClickClose}>
-        <Alert onClose={handleClickClose} severity="error">Please Enter a valid task!</Alert>
+        <Alert onClose={handleClickClose} severity="error">
+          Please Enter a valid task!
+        </Alert>
       </Snackbar>
     </>
   );
